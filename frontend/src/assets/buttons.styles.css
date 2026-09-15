@@ -1,0 +1,31 @@
+button {
+    width: fit-content;
+    height: fit-content;
+    padding: 8px 16px;
+
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border: none;
+
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+
+    transition: all .2s ease-in-out;
+}
+
+button:hover:not(:disabled) {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all .2s ease-in-out;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline-color: var(--text);
+}

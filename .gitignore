@@ -1,0 +1,57 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Production / Build outputs
+dist
+dist-ssr
+build
+out
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Coverage / Testing outputs
+coverage
+.nyc_output
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors
+.idea/shelf/
+.idea/workspace.xml
+.idea/httpRequests/
+.idea/queries/
+.idea/dataSources/
+.idea/dataSources.local.xml
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+.temp
+.tmp
+
+# Runtime data
+data/
+backend/data/
