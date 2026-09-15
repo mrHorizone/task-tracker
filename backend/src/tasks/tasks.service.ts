@@ -18,16 +18,36 @@ export class TasksService implements OnModuleInit {
             await fs.access(this.filePath);
         } catch {
             const initialTasks: Task[] = [
-                {
-                    id: 1,
-                    title: "Learn NestJS",
-                    text: "Understand controllers and services"
-                },
-                {
-                    id: 2,
-                    title: "Learn Prisma",
-                    text: "Connect NestJS to PostgreSQL"
-                }
+              {
+                id: 1,
+                title: 'Postgres integration',
+                text: 'Understand controllers and services',
+              },
+              {
+                id: 2,
+                title: 'Statuses',
+                text: 'Implement statuses for task. Most likely TODO, IN_PROGRESS, DONE',
+              },
+              {
+                id: 3,
+                title: 'Implement authentication',
+                text: 'User entity | Login form | JWT',
+              },
+              {
+                id: 4,
+                title: 'Task creator/assignee',
+                text: 'Add creators field for task and assignee managing',
+              },
+              {
+                id: 5,
+                title: 'Notification service',
+                text: 'Implement a notification service for task changes',
+              },
+              {
+                id: 6,
+                title: 'Use messages broker',
+                text: 'Use any message broker to implement some high load task',
+              },
             ];
             await fs.writeFile(this.filePath, JSON.stringify(initialTasks, null, 2), 'utf-8');
             this.logger.log(`Initialized storage file at ${this.filePath}`);
