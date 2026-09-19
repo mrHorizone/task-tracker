@@ -1,39 +1,58 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, NotFoundException } from '@nestjs/common';
-import { TasksService } from "./tasks.service";
-import { Task } from "./task.types";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { TasksService } from './tasks.service.js';
+import { CreateTaskDto } from './dto/create-task.dto.js';
+import { UpdateTaskDto } from './dto/update-task.dto.js';
 
 @Controller('tasks')
 export class TasksController {
-    constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) {}
 
-    @Get()
-    async getTasks(): Promise<Task[]> {
-        return this.tasksService.getTasks();
-    }
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createTaskDto: CreateTaskDto) {
+    return this.tasksService.create(createTaskDto);
+  }
 
-    @Post()
-    async createTask(@Body() body: { title: string; text: string }): Promise<Task> {
-        return this.tasksService.createTask(body);
-    }
+  @Get()
+  findAll() {
+    return this.tasksService.findAll();
+  }
 
-    @Put(':id')
-    async updateTask(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() body: { title?: string; text?: string }
-    ): Promise<Task> {
-        const updated = await this.tasksService.updateTask(id, body);
-        if (!updated) {
-            throw new NotFoundException(`Task with id ${id} not found`);
-        }
-        return updated;
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.tasksService.findOne(id);
+  }
 
-    @Delete(':id')
-    async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<{ success: boolean }> {
-        const deleted = await this.tasksService.deleteTask(id);
-        if (!deleted) {
-            throw new NotFoundException(`Task with id ${id} not found`);
-        }
-        return { success: true };
-    }
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return this.tasksService.update(id, updateTaskDto);
+  }
+
+  @Patch(':id')
+  patch(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return this.tasksService.update(id, updateTaskDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.tasksService.remove(id);
+  }
 }
