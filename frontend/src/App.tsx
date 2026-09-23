@@ -1,9 +1,12 @@
 import './App.css'
 import {useState, useEffect} from "react";
 import type {Task} from "./types/task.ts";
+import {Status} from "./types/status.ts";
 import Header from "./components/header/Header.tsx";
-import TaskItem from "./components/task/TaskItem.tsx";
+import TaskColumn from "./components/column/TaskColumn.tsx";
 import {taskService} from "./services/taskService.ts";
+
+const COLUMNS = [Status.TODO, Status.IN_PROGRESS, Status.DONE];
 
 function App() {
 
@@ -13,7 +16,10 @@ function App() {
         taskService.getTasks()
             .then(data => {
                 if (Array.isArray(data)) {
-                    setTasks(data);
+                    setTasks(data.map(task => ({
+                        ...task,
+                        status: task.status ?? Status.TODO
+                    })));
                 }
             })
             .catch(error => {
@@ -21,11 +27,12 @@ function App() {
             });
     }, []);
 
-    const addTask = () => {
+    const addTask = (status: Status = Status.TODO) => {
         const newTask: Task = {
             id: Date.now(),
             title: '',
-            text: ''
+            text: '',
+            status
         }
 
         setTasks(prev => [...prev, newTask])
@@ -49,20 +56,21 @@ function App() {
     const saveTask = async (id: number, title: string, text: string) => {
         const existingTask = tasks.find(task => task.id === id);
         const isCreating = existingTask && !existingTask.title;
+        const currentStatus = existingTask?.status ?? Status.TODO;
 
         try {
             if (isCreating) {
-                const createdTask = await taskService.createTask({ title, text });
+                const createdTask = await taskService.createTask({ title, text, status: currentStatus });
                 setTasks(prev =>
                     prev.map(task =>
-                        task.id === id ? createdTask : task
+                        task.id === id ? { ...createdTask, status: createdTask.status ?? currentStatus } : task
                     )
                 );
             } else {
-                const updatedTask = await taskService.updateTask(id, { title, text });
+                const updatedTask = await taskService.updateTask(id, { title, text, status: currentStatus });
                 setTasks(prev =>
                     prev.map(task =>
-                        task.id === id ? updatedTask : task
+                        task.id === id ? { ...updatedTask, status: updatedTask.status ?? currentStatus } : task
                     )
                 );
             }
@@ -71,26 +79,50 @@ function App() {
         }
     }
 
+    const moveTask = async (id: number, targetStatus: Status) => {
+        const existingTask = tasks.find(task => task.id === id);
+        if (!existingTask || existingTask.status === targetStatus) {
+            return;
+        }
+
+        setTasks(prev =>
+            prev.map(task =>
+                task.id === id ? { ...task, status: targetStatus } : task
+            )
+        );
+
+        if (existingTask.title) {
+            try {
+                await taskService.updateTask(id, { status: targetStatus });
+            } catch (error) {
+                console.error("Failed to update task status in db:", error);
+                setTasks(prev =>
+                    prev.map(task =>
+                        task.id === id ? { ...task, status: existingTask.status } : task
+                    )
+                );
+            }
+        }
+    }
+
     return (
         <>
             <Header/>
 
             <main className="main-container">
-                <button className="addTask" onClick={addTask}>Add Task</button>
-
-                {tasks.length > 0 && (
-                    <div className="tasks">
-                        {tasks.map(task => (
-                            <TaskItem
-                                key={task.id}
-                                task={task}
-                                onDelete={deleteTask}
-                                onSave={saveTask}
-                            />
-                        ))}
-                    </div>
-                )}
-
+                <div className="board">
+                    {COLUMNS.map(status => (
+                        <TaskColumn
+                            key={status}
+                            status={status}
+                            tasks={tasks.filter(task => task.status === status)}
+                            onAddTask={addTask}
+                            onDeleteTask={deleteTask}
+                            onSaveTask={saveTask}
+                            onMoveTask={moveTask}
+                        />
+                    ))}
+                </div>
             </main>
         </>
     )

@@ -1,4 +1,5 @@
 import type { Task } from "../types/task.ts";
+import { Status } from "../types/status.ts";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -11,7 +12,7 @@ export const taskService = {
         return response.json();
     },
 
-    async createTask(task: { title: string; text: string }): Promise<Task> {
+    async createTask(task: { title: string; text: string; status?: Status }): Promise<Task> {
         const response = await fetch(`${API_BASE_URL}/tasks`, {
             method: 'POST',
             headers: {
@@ -25,9 +26,9 @@ export const taskService = {
         return response.json();
     },
 
-    async updateTask(id: number, task: Partial<{ title: string; text: string }>): Promise<Task> {
+    async updateTask(id: number, task: Partial<{ title: string; text: string; status: Status }>): Promise<Task> {
         const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },

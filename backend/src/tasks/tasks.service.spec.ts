@@ -90,8 +90,8 @@ describe('TasksService', () => {
 
   describe('update', () => {
     it('should update and return a task', async () => {
-      const existingTask = { id: 1, title: 'Task 1', text: 'Desc 1' };
-      const updateDto = { title: 'Updated Title' };
+      const existingTask = { id: 1, title: 'Task 1', text: 'Desc 1', status: 'TODO' };
+      const updateDto = { title: 'Updated Title', status: 'IN_PROGRESS' as any };
       const updatedTask = { ...existingTask, ...updateDto };
 
       prisma.task.findUnique.mockResolvedValue(existingTask);

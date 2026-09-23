@@ -1,5 +1,5 @@
 input {
-    padding: 8px 16px;
+    padding: var(--fields-padding);
 
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
@@ -8,15 +8,15 @@ input {
 
     color: var(--text);
     font-family: var(--sans);
-    font-size: var(--font-size);
+    font-size: var(--font-size-m);
     font-weight: var(--font-weight);
 
-    transition: all .2s ease-in-out;
+    transition: var(--transition);
 }
 
 input:hover {
     opacity: 0.8;
-    transition: all .2s ease-in-out;
+    transition: var(--transition);
 }
 
 input:focus-visible {
@@ -24,7 +24,7 @@ input:focus-visible {
 }
 
 input[aria-invalid="true"] {
-    outline: 2px auto var(--error);
+    outline: var(--border-width) auto var(--error);
 }
 
 input[aria-invalid="true"]:focus-visible {

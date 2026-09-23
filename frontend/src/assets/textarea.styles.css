@@ -1,5 +1,5 @@
 textarea {
-    padding: 8px 16px;
+    padding: var(--fields-padding);
 
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
@@ -8,7 +8,7 @@ textarea {
 
     color: var(--text);
     font-family: var(--sans);
-    font-size: var(--font-size);
+    font-size: var(--font-size-m);
     font-weight: var(--font-weight);
 
     min-height: 37px;
@@ -16,12 +16,12 @@ textarea {
     overflow-y: auto;
     resize: vertical;
 
-    transition: all .2s ease-in-out;
+    transition: var(--transition);
 }
 
 textarea:hover {
     opacity: 0.8;
-    transition: all .2s ease-in-out;
+    transition: var(--transition);
 }
 
 textarea:focus-visible {
@@ -29,7 +29,7 @@ textarea:focus-visible {
 }
 
 textarea[aria-invalid="true"] {
-    outline: 2px auto var(--error);
+    outline: var(--border-width) auto var(--error);
 }
 
 textarea[aria-invalid="true"]:focus-visible {

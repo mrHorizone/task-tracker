@@ -1,24 +1,31 @@
 button {
     width: fit-content;
     height: fit-content;
-    padding: 8px 16px;
+    padding: var(--fields-padding);
 
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
-    border: none;
+    border: var(--border-width) solid transparent;
+    box-sizing: border-box;
 
     color: var(--text);
     font-family: var(--sans);
-    font-size: var(--font-size);
+    font-size: var(--font-size-m);
     font-weight: var(--font-weight);
 
-    transition: all .2s ease-in-out;
+    transition: var(--transition);
+}
+
+button.dashed {
+    border-color: var(--border-color);
+    border-style: dashed;
 }
 
 button:hover:not(:disabled) {
     cursor: pointer;
-    opacity: 0.8;
-    transition: all .2s ease-in-out;
+    color: var(--text);
+    border-color: var(--text);
+    transition: var(--transition);
 }
 
 button:disabled {

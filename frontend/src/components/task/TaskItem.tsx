@@ -30,8 +30,17 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
     const isTitleInvalid = !title || !title.trim();
     const showTitleError = isTitleTouched && isTitleInvalid;
 
+    const handleDragStart = (e: React.DragEvent) => {
+        e.dataTransfer.setData("text/plain", task.id.toString());
+        e.dataTransfer.effectAllowed = "move";
+    };
+
     return (
-        <div className={`${styles.task}${isEditing ? ` ${styles.editing}` : ''}`}>
+        <div
+            className={`${styles.task}${isEditing ? ` ${styles.editing}` : ''}`}
+            draggable={!isEditing}
+            onDragStart={handleDragStart}
+        >
             {isEditing ? (
                 <>
                     <div className={styles.inputGroup}>

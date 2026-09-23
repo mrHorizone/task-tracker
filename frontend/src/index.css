@@ -18,13 +18,18 @@
 
   --border-radius: 16px;
   --border-width: 2px;
+  --component-padding: 16px;
+  --fields-padding: 8px 16px;
+  --base-gap: 16px;
+  --transition: all .2s ease-in-out;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-size: 16px;
+  --font-size-s: 12px;
+  --font-size-m: 16px;
+  --font-size-l: 20px;
   --font-weight: 500;
 
-
-  font: var(--font-size) var(--sans);
+  font: var(--font-size-m) var(--sans);
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
