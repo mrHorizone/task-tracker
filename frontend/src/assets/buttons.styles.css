@@ -1,6 +1,6 @@
 button {
     width: fit-content;
-    height: fit-content;
+    /*height: fit-content;*/
     padding: var(--fields-padding);
 
     background-color: var(--bg-secondary);
@@ -23,7 +23,6 @@ button.dashed {
 
 button:hover:not(:disabled) {
     cursor: pointer;
-    color: var(--text);
     border-color: var(--text);
     transition: var(--transition);
 }

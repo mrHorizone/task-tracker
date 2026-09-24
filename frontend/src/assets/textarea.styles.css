@@ -3,7 +3,7 @@ textarea {
 
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
-    border: none;
+    border: var(--border-width) solid transparent;
     box-sizing: border-box;
 
     color: var(--text);
@@ -20,7 +20,7 @@ textarea {
 }
 
 textarea:hover {
-    opacity: 0.8;
+    border-color: var(--text);
     transition: var(--transition);
 }
 

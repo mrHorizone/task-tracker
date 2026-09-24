@@ -1,0 +1,57 @@
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--bg-secondary);
+}
+
+.registerArea {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 400px;
+
+    padding: var(--component-padding);
+    gap: var(--base-gap);
+    background: var(--bg);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+}
+
+.title {
+    align-self: center;
+    margin: 0;
+
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight);
+    color: var(--text);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--base-gap);
+    width: 100%;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+}
+
+.actions {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 8px;
+}
+
+.error {
+    color: var(--error);
+    font-size: var(--font-size-m);
+}

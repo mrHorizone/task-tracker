@@ -22,3 +22,9 @@ model Task {
   text   String
   status Status @default(TODO)
 }
+
+model User {
+  id       Int    @id @default(autoincrement())
+  login    String @unique
+  password String
+}

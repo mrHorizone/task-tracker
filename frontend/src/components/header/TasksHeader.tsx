@@ -1,6 +1,6 @@
-import styles from './Header.module.css';
+import styles from './TasksHeader.module.css';
 
-function Header() {
+function TasksHeader() {
     return (
         <header className={styles.header}>
             <div>
@@ -10,10 +10,10 @@ function Header() {
             <span>Task tracker APP</span>
 
             <div>
-                login/logout
+                logout
             </div>
         </header>
     )
 }
 
-export default Header;
+export default TasksHeader;

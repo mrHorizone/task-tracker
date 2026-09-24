@@ -32,19 +32,13 @@
     min-width: 0;
 }
 
-.label {
-    font-size: var(--font-size-s);
-    font-weight: var(--font-weight);
-    color: var(--text);
-    opacity: 0.8;
-}
-
 .field {
     width: 100%;
     min-height: 20px;
     padding: var(--fields-padding);
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
+    border: var(--border-width) solid transparent;
     box-sizing: border-box;
     color: var(--text);
     transition: var(--transition);

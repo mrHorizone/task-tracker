@@ -1,6 +1,7 @@
 @import "assets/input.styles.css";
 @import "assets/textarea.styles.css";
 @import "assets/buttons.styles.css";
+@import "assets/label.styles.css";
 
 :root {
   --text: #6b6375;

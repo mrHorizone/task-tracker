@@ -44,7 +44,7 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
             {isEditing ? (
                 <>
                     <div className={styles.inputGroup}>
-                        <label htmlFor={titleInputId} className={styles.label}>
+                        <label htmlFor={titleInputId}>
                             Title
                         </label>
                         <input
@@ -59,7 +59,7 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <label htmlFor={descInputId} className={styles.label}>
+                        <label htmlFor={descInputId}>
                             Description
                         </label>
                         <textarea
@@ -100,14 +100,14 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
             ) : (
                 <>
                     <div className={styles.inputGroup}>
-                        <span className={styles.label}>Title</span>
+                        <label>Title</label>
                         <span className={`${styles.field} ${styles.titleField}`} title={task.title}>
                             {task.title}
                         </span>
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <span className={styles.label}>Description</span>
+                        <label>Description</label>
                         <span className={`${styles.field} ${styles.descField}`}>
                             {task.text || '-'}
                         </span>
