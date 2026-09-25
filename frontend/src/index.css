@@ -4,65 +4,63 @@
 @import "assets/label.styles.css";
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --bg-secondary:rgba(244, 243, 236, 0.5);
-  --border-color: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --error: #f44336;
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    --text: #6b6375;
+    --text-h: #08060d;
+    --bg: #fff;
+    --bg-secondary: rgba(244, 243, 236, 0.5);
+    --border-color: #e5e4e7;
+    --code-bg: #f4f3ec;
+    --accent: #aa3bff;
+    --accent-bg: rgba(170, 59, 255, 0.1);
+    --accent-border: rgba(170, 59, 255, 0.5);
+    --error: #f44336;
+    --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --border-radius: 16px;
-  --border-width: 2px;
-  --component-padding: 16px;
-  --fields-padding: 8px 16px;
-  --base-gap: 16px;
-  --transition: all .2s ease-in-out;
+    --border-radius: 16px;
+    --border-width: 2px;
+    --component-padding: 16px;
+    --fields-padding: 8px 16px;
+    --base-gap: 16px;
+    --transition: all .2s ease-in-out;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-size-s: 12px;
-  --font-size-m: 16px;
-  --font-size-l: 20px;
-  --font-weight: 500;
+    --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+    --font-size-s: 12px;
+    --font-size-m: 16px;
+    --font-size-l: 20px;
+    --font-weight: 500;
 
-  font: var(--font-size-m) var(--sans);
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font: var(--font-size-m) var(--sans);
+    color-scheme: light dark;
+    color: var(--text);
+    background: var(--bg);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --bg-secondary: rgba(47, 48, 58, 0.5);
-    --border-color: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+    :root {
+        --text: #9ca3af;
+        --text-h: #f3f4f6;
+        --bg: #16171d;
+        --bg-secondary: rgba(47, 48, 58, 0.5);
+        --border-color: #2e303a;
+        --code-bg: #1f2028;
+        --accent: #c084fc;
+        --accent-bg: rgba(192, 132, 252, 0.15);
+        --accent-border: rgba(192, 132, 252, 0.5);
+        --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    }
 }
 
 #root {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
 }

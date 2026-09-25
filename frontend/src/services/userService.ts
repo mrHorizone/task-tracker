@@ -1,4 +1,4 @@
-import type { User } from "../types/user.ts";
+import type {User} from "../types/user.ts";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 

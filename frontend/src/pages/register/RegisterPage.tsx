@@ -1,5 +1,5 @@
 import {type SubmitEvent, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import {authService} from "../../services/authService.ts";
 import styles from "./RegisterPage.module.css";
 
@@ -9,6 +9,10 @@ function RegisterPage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    if (authService.isAuthenticated()) {
+        return <Navigate to="/tasks" replace/>;
+    }
 
     const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();

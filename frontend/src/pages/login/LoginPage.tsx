@@ -1,5 +1,5 @@
 import {useState, type SubmitEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import styles from "./LoginPage.module.css";
 import {authService} from "../../services/authService.ts";
 
@@ -9,6 +9,10 @@ function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    if (authService.isAuthenticated()) {
+        return <Navigate to="/tasks" replace/>;
+    }
 
     const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();

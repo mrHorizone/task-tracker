@@ -1,4 +1,4 @@
-import { Status } from "./status.ts";
+import {Status} from "./status.ts";
 
 export type Task = {
     id: number
@@ -7,4 +7,4 @@ export type Task = {
     status: Status
 }
 
-export { Status };
+export {Status};

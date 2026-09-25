@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import {Status, type Task} from "../../types/task.ts";
 import {taskService} from "../../services/taskService.ts";
-import TasksHeader from "../../components/header/TasksHeader.tsx";
+import AppHeader from "../../components/header/AppHeader.tsx";
 import TaskColumn from "../../components/column/TaskColumn.tsx";
 import styles from "./TasksPage.module.css";
 
@@ -58,17 +58,17 @@ function TasksPage() {
 
         try {
             if (isCreating) {
-                const createdTask = await taskService.createTask({ title, text, status: currentStatus });
+                const createdTask = await taskService.createTask({title, text, status: currentStatus});
                 setTasks(prev =>
                     prev.map(task =>
-                        task.id === id ? { ...createdTask, status: createdTask.status ?? currentStatus } : task
+                        task.id === id ? {...createdTask, status: createdTask.status ?? currentStatus} : task
                     )
                 );
             } else {
-                const updatedTask = await taskService.updateTask(id, { title, text, status: currentStatus });
+                const updatedTask = await taskService.updateTask(id, {title, text, status: currentStatus});
                 setTasks(prev =>
                     prev.map(task =>
-                        task.id === id ? { ...updatedTask, status: updatedTask.status ?? currentStatus } : task
+                        task.id === id ? {...updatedTask, status: updatedTask.status ?? currentStatus} : task
                     )
                 );
             }
@@ -85,18 +85,18 @@ function TasksPage() {
 
         setTasks(prev =>
             prev.map(task =>
-                task.id === id ? { ...task, status: targetStatus } : task
+                task.id === id ? {...task, status: targetStatus} : task
             )
         );
 
         if (existingTask.title) {
             try {
-                await taskService.updateTask(id, { status: targetStatus });
+                await taskService.updateTask(id, {status: targetStatus});
             } catch (error) {
                 console.error("Failed to update task status in db:", error);
                 setTasks(prev =>
                     prev.map(task =>
-                        task.id === id ? { ...task, status: existingTask.status } : task
+                        task.id === id ? {...task, status: existingTask.status} : task
                     )
                 );
             }
@@ -105,7 +105,7 @@ function TasksPage() {
 
     return (
         <>
-            <TasksHeader />
+            <AppHeader/>
 
             <main className={styles.mainContainer}>
                 <div className={styles.board}>
