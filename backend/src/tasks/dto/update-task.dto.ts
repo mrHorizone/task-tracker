@@ -8,10 +8,12 @@ export class UpdateTaskDto {
     title?: string;
 
     @IsString()
+    @IsNotEmpty()
     @IsOptional()
     text?: string;
 
     @IsEnum(Status)
+    @IsNotEmpty()
     @IsOptional()
     status?: Status;
 }

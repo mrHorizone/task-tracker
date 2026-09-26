@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 import {Status, type Task} from "../../types/task.ts";
 import {taskService} from "../../services/taskService.ts";
+import {socketService} from "../../services/socketService.ts";
 import AppHeader from "../../components/header/AppHeader.tsx";
 import TaskColumn from "../../components/column/TaskColumn.tsx";
 import styles from "./TasksPage.module.css";
@@ -23,6 +24,47 @@ function TasksPage() {
             .catch(error => {
                 console.error("Failed to fetch tasks from backend:", error);
             });
+    }, []);
+
+    useEffect(() => {
+        const socket = socketService.connect();
+
+        const handleTaskCreated = (newTask: Task) => {
+            setTasks(prev => {
+                if (prev.some(task => task.id === newTask.id)) {
+                    return prev.map(task =>
+                        task.id === newTask.id
+                            ? {...newTask, status: newTask.status ?? Status.TODO}
+                            : task
+                    );
+                }
+                return [...prev, {...newTask, status: newTask.status ?? Status.TODO}];
+            });
+        };
+
+        const handleTaskUpdated = (updatedTask: Task) => {
+            setTasks(prev =>
+                prev.map(task =>
+                    task.id === updatedTask.id
+                        ? {...task, ...updatedTask, status: updatedTask.status ?? task.status ?? Status.TODO}
+                        : task
+                )
+            );
+        };
+
+        const handleTaskDeleted = ({id}: {id: number}) => {
+            setTasks(prev => prev.filter(task => task.id !== id));
+        };
+
+        socket.on('taskCreated', handleTaskCreated);
+        socket.on('taskUpdated', handleTaskUpdated);
+        socket.on('taskDeleted', handleTaskDeleted);
+
+        return () => {
+            socket.off('taskCreated', handleTaskCreated);
+            socket.off('taskUpdated', handleTaskUpdated);
+            socket.off('taskDeleted', handleTaskDeleted);
+        };
     }, []);
 
     const addTask = (status: Status = Status.TODO) => {
@@ -59,11 +101,15 @@ function TasksPage() {
         try {
             if (isCreating) {
                 const createdTask = await taskService.createTask({title, text, status: currentStatus});
-                setTasks(prev =>
-                    prev.map(task =>
+                setTasks(prev => {
+                    const alreadyExists = prev.some(task => task.id === createdTask.id);
+                    if (alreadyExists) {
+                        return prev.filter(task => task.id !== id);
+                    }
+                    return prev.map(task =>
                         task.id === id ? {...createdTask, status: createdTask.status ?? currentStatus} : task
-                    )
-                );
+                    );
+                });
             } else {
                 const updatedTask = await taskService.updateTask(id, {title, text, status: currentStatus});
                 setTasks(prev =>

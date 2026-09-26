@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect, useId} from "react";
 import type {Task} from "../../types/task.ts";
 import styles from './TaskItem.module.css';
+import * as React from "react";
 
 type NoteItemProps = {
     task: Task
@@ -15,6 +16,7 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
     const [title, setTitle] = useState(task.title);
     const [text, setText] = useState(task.text);
     const [isTitleTouched, setIsTitleTouched] = useState(false);
+    const [isTextTouched, setIsTextTouched] = useState(false);
 
     const titleInputRef = useRef<HTMLInputElement>(null);
     const titleInputId = useId();
@@ -29,6 +31,11 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
 
     const isTitleInvalid = !title || !title.trim();
     const showTitleError = isTitleTouched && isTitleInvalid;
+
+    const isTextInvalid = !text || !text.trim();
+    const showTextError = isTextTouched && isTextInvalid;
+
+    const isFormInvalid = isTitleInvalid || isTextInvalid;
 
     const handleDragStart = (e: React.DragEvent) => {
         e.dataTransfer.setData("text/plain", task.id.toString());
@@ -67,7 +74,9 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                             value={text}
                             placeholder="Enter description..."
                             rows={3}
+                            aria-invalid={showTextError}
                             onChange={event => setText(event.target.value)}
+                            onBlur={() => setIsTextTouched(true)}
                         />
                     </div>
 
@@ -80,18 +89,20 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                                 setTitle(task.title);
                                 setText(task.text);
                                 setIsTitleTouched(false);
+                                setIsTextTouched(false);
                             }
                         }}>
                             Cancel
                         </button>
 
                         <button
-                            disabled={isTitleInvalid}
+                            disabled={isFormInvalid}
                             onClick={() => {
-                                if (isTitleInvalid) return;
+                                if (isFormInvalid) return;
                                 onSave(task.id, title, text);
                                 setIsEditing(false);
                                 setIsTitleTouched(false);
+                                setIsTextTouched(false);
                             }}>
                             Save
                         </button>
@@ -117,6 +128,7 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                         <button onClick={() => {
                             setIsEditing(true);
                             setIsTitleTouched(false);
+                            setIsTextTouched(false);
                         }}>
                             Edit
                         </button>

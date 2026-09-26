@@ -1,10 +1,16 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {NotFoundException} from '@nestjs/common';
 import {TasksService} from './tasks.service.js';
+import {TasksGateway} from './tasks.gateway.js';
 import {PrismaService} from '../prisma/prisma.service.js';
 
 describe('TasksService', () => {
     let service: TasksService;
+    let gateway: {
+        sendTaskCreated: ReturnType<typeof vi.fn>;
+        sendTaskUpdated: ReturnType<typeof vi.fn>;
+        sendTaskDeleted: ReturnType<typeof vi.fn>;
+    };
     let prisma: {
         task: {
             create: ReturnType<typeof vi.fn>;
@@ -16,6 +22,12 @@ describe('TasksService', () => {
     };
 
     beforeEach(async () => {
+        gateway = {
+            sendTaskCreated: vi.fn(),
+            sendTaskUpdated: vi.fn(),
+            sendTaskDeleted: vi.fn(),
+        };
+
         prisma = {
             task: {
                 create: vi.fn(),
@@ -33,6 +45,10 @@ describe('TasksService', () => {
                     provide: PrismaService,
                     useValue: prisma,
                 },
+                {
+                    provide: TasksGateway,
+                    useValue: gateway,
+                },
             ],
         }).compile();
 
@@ -44,7 +60,7 @@ describe('TasksService', () => {
     });
 
     describe('create', () => {
-        it('should create a task', async () => {
+        it('should create a task and notify gateway', async () => {
             const dto = {title: 'Test Task', text: 'Test description'};
             const createdTask = {id: 1, ...dto};
             prisma.task.create.mockResolvedValue(createdTask);
@@ -52,6 +68,7 @@ describe('TasksService', () => {
             const result = await service.create(dto);
             expect(result).toEqual(createdTask);
             expect(prisma.task.create).toHaveBeenCalledWith({data: dto});
+            expect(gateway.sendTaskCreated).toHaveBeenCalledWith(createdTask);
         });
     });
 
@@ -89,7 +106,7 @@ describe('TasksService', () => {
     });
 
     describe('update', () => {
-        it('should update and return a task', async () => {
+        it('should update, return a task and notify gateway', async () => {
             const existingTask = {id: 1, title: 'Task 1', text: 'Desc 1', status: 'TODO'};
             const updateDto = {title: 'Updated Title', status: 'IN_PROGRESS' as any};
             const updatedTask = {...existingTask, ...updateDto};
@@ -103,6 +120,7 @@ describe('TasksService', () => {
                 where: {id: 1},
                 data: updateDto,
             });
+            expect(gateway.sendTaskUpdated).toHaveBeenCalledWith(updatedTask);
         });
 
         it('should throw NotFoundException if task to update does not exist', async () => {
@@ -115,7 +133,7 @@ describe('TasksService', () => {
     });
 
     describe('remove', () => {
-        it('should delete a task and return success', async () => {
+        it('should delete a task, return success and notify gateway', async () => {
             const existingTask = {id: 1, title: 'Task 1', text: 'Desc 1'};
             prisma.task.findUnique.mockResolvedValue(existingTask);
             prisma.task.delete.mockResolvedValue(existingTask);
@@ -123,6 +141,7 @@ describe('TasksService', () => {
             const result = await service.remove(1);
             expect(result).toEqual({success: true, id: 1});
             expect(prisma.task.delete).toHaveBeenCalledWith({where: {id: 1}});
+            expect(gateway.sendTaskDeleted).toHaveBeenCalledWith(1);
         });
 
         it('should throw NotFoundException if task to delete does not exist', async () => {
