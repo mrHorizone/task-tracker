@@ -31,6 +31,7 @@ export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
             if (!authHeader) {
                 this.logger.warn(`WS connection rejected: Missing authorization token for client ${client.id}`);
+                client.emit('auth_error', {message: 'Missing authorization token'});
                 client.disconnect();
                 return;
             }
@@ -47,6 +48,7 @@ export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.logger.log(`WS Client connected: ${client.id} (User: ${payload.login})`);
         } catch {
             this.logger.warn(`WS connection rejected: Invalid token for client ${client.id}`);
+            client.emit('auth_error', {message: 'Invalid token'});
             client.disconnect();
         }
     }

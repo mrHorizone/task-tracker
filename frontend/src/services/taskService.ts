@@ -20,6 +20,11 @@ export const taskService = {
         const response = await fetch(`${API_BASE_URL}/tasks`, {
             headers: getAuthHeaders(),
         });
+        if (response.status === 401) {
+            authService.logout();
+            window.location.href = '/login';
+            throw new Error('Unauthorized');
+        }
         if (!response.ok) {
             throw new Error(`Failed to fetch tasks: ${response.statusText}`);
         }
@@ -32,6 +37,11 @@ export const taskService = {
             headers: getAuthHeaders(),
             body: JSON.stringify(task),
         });
+        if (response.status === 401) {
+            authService.logout();
+            window.location.href = '/login';
+            throw new Error('Unauthorized');
+        }
         if (!response.ok) {
             throw new Error(`Failed to create task: ${response.statusText}`);
         }
@@ -44,6 +54,11 @@ export const taskService = {
             headers: getAuthHeaders(),
             body: JSON.stringify(task),
         });
+        if (response.status === 401) {
+            authService.logout();
+            window.location.href = '/login';
+            throw new Error('Unauthorized');
+        }
         if (!response.ok) {
             throw new Error(`Failed to update task: ${response.statusText}`);
         }
@@ -55,6 +70,11 @@ export const taskService = {
             method: 'DELETE',
             headers: getAuthHeaders(),
         });
+        if (response.status === 401) {
+            authService.logout();
+            window.location.href = '/login';
+            throw new Error('Unauthorized');
+        }
         if (!response.ok) {
             throw new Error(`Failed to delete task: ${response.statusText}`);
         }

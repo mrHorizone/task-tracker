@@ -84,11 +84,13 @@ describe('TasksGateway', () => {
                     headers: {},
                 },
                 data: {},
+                emit: vi.fn(),
                 disconnect: vi.fn(),
             } as unknown as Socket;
 
             await gateway.handleConnection(mockClient);
 
+            expect(mockClient.emit).toHaveBeenCalledWith('auth_error', {message: 'Missing authorization token'});
             expect(mockClient.disconnect).toHaveBeenCalled();
             expect(jwtService.verifyAsync).not.toHaveBeenCalled();
         });
@@ -101,6 +103,7 @@ describe('TasksGateway', () => {
                     headers: {},
                 },
                 data: {},
+                emit: vi.fn(),
                 disconnect: vi.fn(),
             } as unknown as Socket;
 
@@ -108,6 +111,7 @@ describe('TasksGateway', () => {
 
             await gateway.handleConnection(mockClient);
 
+            expect(mockClient.emit).toHaveBeenCalledWith('auth_error', {message: 'Invalid token'});
             expect(mockClient.disconnect).toHaveBeenCalled();
         });
     });

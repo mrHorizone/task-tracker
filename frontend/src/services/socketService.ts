@@ -5,6 +5,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 class SocketService {
     private socket: Socket | null = null;
+    private authErrorCallback: (() => void) | null = null;
+
+    onAuthError(callback: () => void): () => void {
+        this.authErrorCallback = callback;
+        return () => {
+            if (this.authErrorCallback === callback) {
+                this.authErrorCallback = null;
+            }
+        };
+    }
 
     getSocket(): Socket {
         if (!this.socket) {
@@ -15,6 +25,30 @@ class SocketService {
                         token: authService.getToken(),
                     });
                 },
+            });
+
+            this.socket.on('auth_error', () => {
+                authService.logout();
+                if (this.authErrorCallback) {
+                    this.authErrorCallback();
+                } else {
+                    window.location.href = '/login';
+                }
+            });
+
+            this.socket.on('connect_error', (error) => {
+                if (
+                    error?.message?.toLowerCase().includes('token') ||
+                    error?.message?.toLowerCase().includes('unauthorized') ||
+                    error?.message?.toLowerCase().includes('auth')
+                ) {
+                    authService.logout();
+                    if (this.authErrorCallback) {
+                        this.authErrorCallback();
+                    } else {
+                        window.location.href = '/login';
+                    }
+                }
             });
         }
         return this.socket;

@@ -1,7 +1,9 @@
 import {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import {Status, type Task} from "../../types/task.ts";
 import {taskService} from "../../services/taskService.ts";
 import {socketService} from "../../services/socketService.ts";
+import {authService} from "../../services/authService.ts";
 import AppHeader from "../../components/header/AppHeader.tsx";
 import TaskColumn from "../../components/column/TaskColumn.tsx";
 import styles from "./TasksPage.module.css";
@@ -9,7 +11,18 @@ import styles from "./TasksPage.module.css";
 const COLUMNS = [Status.TODO, Status.IN_PROGRESS, Status.DONE];
 
 function TasksPage() {
+    const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([]);
+
+    useEffect(() => {
+        const unsubscribeAuthError = socketService.onAuthError(() => {
+            navigate('/login');
+        });
+
+        return () => {
+            unsubscribeAuthError();
+        };
+    }, [navigate]);
 
     useEffect(() => {
         taskService.getTasks()
@@ -23,8 +36,11 @@ function TasksPage() {
             })
             .catch(error => {
                 console.error("Failed to fetch tasks from backend:", error);
+                if (!authService.isAuthenticated()) {
+                    navigate('/login');
+                }
             });
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         const socket = socketService.connect();
