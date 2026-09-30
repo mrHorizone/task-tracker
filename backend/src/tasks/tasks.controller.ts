@@ -7,6 +7,7 @@ import {
     Delete,
     Body,
     Param,
+    Req,
     ParseIntPipe,
     HttpCode,
     HttpStatus,
@@ -25,8 +26,8 @@ export class TasksController {
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    create(@Body() createTaskDto: CreateTaskDto) {
-        return this.tasksService.create(createTaskDto);
+    create(@Body() createTaskDto: CreateTaskDto, @Req() req: any) {
+        return this.tasksService.create(createTaskDto, req?.user);
     }
 
     @Get()
@@ -43,20 +44,22 @@ export class TasksController {
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateTaskDto: UpdateTaskDto,
+        @Req() req: any,
     ) {
-        return this.tasksService.update(id, updateTaskDto);
+        return this.tasksService.update(id, updateTaskDto, req?.user);
     }
 
     @Patch(':id')
     patch(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateTaskDto: UpdateTaskDto,
+        @Req() req: any,
     ) {
-        return this.tasksService.update(id, updateTaskDto);
+        return this.tasksService.update(id, updateTaskDto, req?.user);
     }
 
     @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id: number) {
-        return this.tasksService.remove(id);
+    remove(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+        return this.tasksService.remove(id, req?.user);
     }
 }

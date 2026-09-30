@@ -8,3 +8,9 @@
 .appName {
     font-size: var(--font-size-l);
 }
+
+.userPanel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}

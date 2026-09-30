@@ -48,9 +48,9 @@ describe('TasksController', () => {
             const created = {id: 1, ...dto};
             service.create.mockResolvedValue(created);
 
-            const result = await controller.create(dto);
+            const result = await controller.create(dto, {user: {id: 1, login: 'user1'}});
             expect(result).toEqual(created);
-            expect(service.create).toHaveBeenCalledWith(dto);
+            expect(service.create).toHaveBeenCalledWith(dto, {id: 1, login: 'user1'});
         });
     });
 
@@ -82,9 +82,9 @@ describe('TasksController', () => {
             const updated = {id: 1, title: 'Updated', text: 'Desc'};
             service.update.mockResolvedValue(updated);
 
-            const result = await controller.update(1, dto);
+            const result = await controller.update(1, dto, {user: {id: 1, login: 'user1'}});
             expect(result).toEqual(updated);
-            expect(service.update).toHaveBeenCalledWith(1, dto);
+            expect(service.update).toHaveBeenCalledWith(1, dto, {id: 1, login: 'user1'});
         });
     });
 
@@ -92,9 +92,9 @@ describe('TasksController', () => {
         it('should delete a task', async () => {
             service.remove.mockResolvedValue({success: true, id: 1});
 
-            const result = await controller.remove(1);
+            const result = await controller.remove(1, {user: {id: 1, login: 'user1'}});
             expect(result).toEqual({success: true, id: 1});
-            expect(service.remove).toHaveBeenCalledWith(1);
+            expect(service.remove).toHaveBeenCalledWith(1, {id: 1, login: 'user1'});
         });
     });
 });

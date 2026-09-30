@@ -68,6 +68,16 @@ class SocketService {
             this.socket = null;
         }
     }
+
+    startEditTask(taskId: number): void {
+        const socket = this.getSocket();
+        socket.emit('startEditTask', {taskId});
+    }
+
+    stopEditTask(taskId: number): void {
+        const socket = this.getSocket();
+        socket.emit('stopEditTask', {taskId});
+    }
 }
 
 export const socketService = new SocketService();

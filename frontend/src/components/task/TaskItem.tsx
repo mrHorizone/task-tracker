@@ -1,15 +1,18 @@
 import {useState, useRef, useEffect, useId} from "react";
-import type {Task} from "../../types/task.ts";
+import type {Task, TaskEventUser} from "../../types/task.ts";
 import styles from './TaskItem.module.css';
 import * as React from "react";
 
 type NoteItemProps = {
-    task: Task
-    onDelete: (id: number) => void
-    onSave: (id: number, title: string, text: string) => void
+    task: Task;
+    lockedByUser?: TaskEventUser;
+    onDelete: (id: number) => void;
+    onSave: (id: number, title: string, text: string) => void;
+    onStartEdit?: (id: number) => void;
+    onStopEdit?: (id: number) => void;
 }
 
-function TaskItem({task, onDelete, onSave}: NoteItemProps) {
+function TaskItem({task, lockedByUser, onDelete, onSave, onStartEdit, onStopEdit}: NoteItemProps) {
     const isCreate = !task.title;
 
     const [isEditing, setIsEditing] = useState(isCreate);
@@ -17,6 +20,8 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
     const [text, setText] = useState(task.text);
     const [isTitleTouched, setIsTitleTouched] = useState(false);
     const [isTextTouched, setIsTextTouched] = useState(false);
+
+    const isLocked = Boolean(lockedByUser);
 
     const titleInputRef = useRef<HTMLInputElement>(null);
     const titleInputId = useId();
@@ -29,6 +34,14 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
         }
     }, [isCreate]);
 
+    // Keep title/text in sync if task props update from outside
+    useEffect(() => {
+        if (!isEditing) {
+            setTitle(task.title);
+            setText(task.text);
+        }
+    }, [task.title, task.text, isEditing]);
+
     const isTitleInvalid = !title || !title.trim();
     const showTitleError = isTitleTouched && isTitleInvalid;
 
@@ -38,15 +51,50 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
     const isFormInvalid = isTitleInvalid || isTextInvalid;
 
     const handleDragStart = (e: React.DragEvent) => {
+        if (isEditing || isLocked) {
+            e.preventDefault();
+            return;
+        }
         e.dataTransfer.setData("text/plain", task.id.toString());
         e.dataTransfer.effectAllowed = "move";
     };
 
+    const handleStartEditing = () => {
+        if (isLocked) return;
+        setIsEditing(true);
+        setIsTitleTouched(false);
+        setIsTextTouched(false);
+        onStartEdit?.(task.id);
+    };
+
+    const handleCancel = () => {
+        if (isCreate) {
+            onDelete(task.id);
+        } else {
+            setIsEditing(false);
+            setTitle(task.title);
+            setText(task.text);
+            setIsTitleTouched(false);
+            setIsTextTouched(false);
+            onStopEdit?.(task.id);
+        }
+    };
+
+    const handleSave = () => {
+        if (isFormInvalid) return;
+        onSave(task.id, title, text);
+        setIsEditing(false);
+        setIsTitleTouched(false);
+        setIsTextTouched(false);
+        onStopEdit?.(task.id);
+    };
+
     return (
         <div
-            className={`${styles.task}${isEditing ? ` ${styles.editing}` : ''}`}
-            draggable={!isEditing}
+            className={`${styles.task}${isEditing ? ` ${styles.editing}` : ''}${isLocked ? ` ${styles.locked}` : ''}`}
+            draggable={!isEditing && !isLocked}
             onDragStart={handleDragStart}
+            title={lockedByUser ? `Editing by ${lockedByUser.login}...` : undefined}
         >
             {isEditing ? (
                 <>
@@ -81,29 +129,13 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                     </div>
 
                     <div className={styles.actions}>
-                        <button onClick={() => {
-                            if (isCreate) {
-                                onDelete(task.id);
-                            } else {
-                                setIsEditing(false);
-                                setTitle(task.title);
-                                setText(task.text);
-                                setIsTitleTouched(false);
-                                setIsTextTouched(false);
-                            }
-                        }}>
+                        <button onClick={handleCancel}>
                             Cancel
                         </button>
 
                         <button
                             disabled={isFormInvalid}
-                            onClick={() => {
-                                if (isFormInvalid) return;
-                                onSave(task.id, title, text);
-                                setIsEditing(false);
-                                setIsTitleTouched(false);
-                                setIsTextTouched(false);
-                            }}>
+                            onClick={handleSave}>
                             Save
                         </button>
                     </div>
@@ -125,15 +157,19 @@ function TaskItem({task, onDelete, onSave}: NoteItemProps) {
                     </div>
 
                     <div className={styles.actions}>
-                        <button onClick={() => {
-                            setIsEditing(true);
-                            setIsTitleTouched(false);
-                            setIsTextTouched(false);
-                        }}>
+                        <button
+                            disabled={isLocked}
+                            title={isLocked ? `Task is currently being edited by ${lockedByUser?.login}` : undefined}
+                            onClick={handleStartEditing}
+                        >
                             Edit
                         </button>
 
-                        <button onClick={() => onDelete(task.id)}>
+                        <button
+                            disabled={isLocked}
+                            title={isLocked ? `Task is currently being edited by ${lockedByUser?.login}` : undefined}
+                            onClick={() => onDelete(task.id)}
+                        >
                             Delete
                         </button>
                     </div>

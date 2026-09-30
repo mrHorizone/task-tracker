@@ -4,6 +4,7 @@ import styles from './AppHeader.module.css';
 
 function AppHeader() {
     const navigate = useNavigate();
+    const user = authService.getUser();
 
     const handleLogout = () => {
         authService.logout();
@@ -12,15 +13,19 @@ function AppHeader() {
 
     return (
         <header className={styles.header}>
-            <div>
-                notifications
+            {/*<button className="pulse" onClick={() => {*/}
+            {/*    console.log("open sidebar with notifications")*/}
+            {/*}}>*/}
+            {/*    Notifications*/}
+            {/*</button>*/}
+
+            <span className={styles.appName}>{user?.login}'s tasks</span>
+
+            <div className={styles.userPanel}>
+                <button onClick={handleLogout}>
+                    Logout
+                </button>
             </div>
-
-            <span className={styles.appName}>Task tracker App</span>
-
-            <button onClick={handleLogout}>
-                Logout
-            </button>
         </header>
     );
 }

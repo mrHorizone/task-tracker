@@ -68,7 +68,7 @@ describe('TasksService', () => {
             const result = await service.create(dto);
             expect(result).toEqual(createdTask);
             expect(prisma.task.create).toHaveBeenCalledWith({data: dto});
-            expect(gateway.sendTaskCreated).toHaveBeenCalledWith(createdTask);
+            expect(gateway.sendTaskCreated).toHaveBeenCalledWith(createdTask, undefined);
         });
     });
 
@@ -120,7 +120,7 @@ describe('TasksService', () => {
                 where: {id: 1},
                 data: updateDto,
             });
-            expect(gateway.sendTaskUpdated).toHaveBeenCalledWith(updatedTask);
+            expect(gateway.sendTaskUpdated).toHaveBeenCalledWith(updatedTask, undefined);
         });
 
         it('should throw NotFoundException if task to update does not exist', async () => {
@@ -141,7 +141,7 @@ describe('TasksService', () => {
             const result = await service.remove(1);
             expect(result).toEqual({success: true, id: 1});
             expect(prisma.task.delete).toHaveBeenCalledWith({where: {id: 1}});
-            expect(gateway.sendTaskDeleted).toHaveBeenCalledWith(1);
+            expect(gateway.sendTaskDeleted).toHaveBeenCalledWith(1, undefined, 'Task 1');
         });
 
         it('should throw NotFoundException if task to delete does not exist', async () => {
