@@ -156,6 +156,48 @@ function TaskItem({task, lockedByUser, onDelete, onSave, onStartEdit, onStopEdit
                         </span>
                     </div>
 
+                    {(task.author || task.createdAt || task.updatedBy || task.updatedAt) && (
+                        <div className={styles.metaInfo}>
+                            {(task.author || task.createdAt) && (
+                                <div className={styles.metaItem}>
+                                    <span>
+                                        Created by: <span className={styles.metaAuthor}>{task.author?.login || 'Unknown'}</span>
+                                    </span>
+                                    {task.createdAt && (
+                                        <span>
+                                            {new Date(task.createdAt).toLocaleString(undefined, {
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+
+                            {(task.updatedBy || (task.updatedAt && task.createdAt && new Date(task.updatedAt).getTime() !== new Date(task.createdAt).getTime())) && (
+                                <div className={styles.metaItem}>
+                                    <span>
+                                        Updated by: <span className={styles.metaAuthor}>{task.updatedBy?.login || 'Unknown'}</span>
+                                    </span>
+                                    {task.updatedAt && (
+                                        <span>
+                                            {new Date(task.updatedAt).toLocaleString(undefined, {
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className={styles.actions}>
                         <button
                             disabled={isLocked}

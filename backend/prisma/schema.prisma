@@ -17,14 +17,22 @@ enum Status {
 }
 
 model Task {
-  id     Int    @id @default(autoincrement())
-  title  String
-  text   String
-  status Status @default(TODO)
+  id          Int      @id @default(autoincrement())
+  title       String
+  text        String
+  status      Status   @default(TODO)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  authorId    Int?
+  author      User?    @relation("TaskAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  updatedById Int?
+  updatedBy   User?    @relation("TaskUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  login    String @unique
-  password String
+  id             Int    @id @default(autoincrement())
+  login          String @unique
+  password       String
+  authoredTasks  Task[] @relation("TaskAuthor")
+  updatedTasks   Task[] @relation("TaskUpdater")
 }

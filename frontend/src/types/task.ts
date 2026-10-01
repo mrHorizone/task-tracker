@@ -11,6 +11,12 @@ export type Task = {
     text: string;
     status: Status;
     user?: TaskEventUser;
+    authorId?: number | null;
+    author?: TaskEventUser | null;
+    createdAt?: string | Date;
+    updatedById?: number | null;
+    updatedBy?: TaskEventUser | null;
+    updatedAt?: string | Date;
 };
 
 export type TaskDeletedEvent = {

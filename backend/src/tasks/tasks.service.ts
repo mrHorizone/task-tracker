@@ -13,9 +13,28 @@ export class TasksService {
     ) {
     }
 
+    private readonly taskInclude = {
+        author: {
+            select: {
+                id: true,
+                login: true,
+            },
+        },
+        updatedBy: {
+            select: {
+                id: true,
+                login: true,
+            },
+        },
+    };
+
     async create(createTaskDto: CreateTaskDto, user?: TaskEventUser): Promise<Task> {
         const task = await this.prisma.task.create({
-            data: createTaskDto,
+            data: {
+                ...createTaskDto,
+                ...(user?.id ? {authorId: user.id} : {}),
+            },
+            include: this.taskInclude,
         });
         this.tasksGateway.sendTaskCreated(task, user);
         return task;
@@ -24,12 +43,14 @@ export class TasksService {
     async findAll(): Promise<Task[]> {
         return this.prisma.task.findMany({
             orderBy: {id: 'asc'},
+            include: this.taskInclude,
         });
     }
 
     async findOne(id: number): Promise<Task> {
         const task = await this.prisma.task.findUnique({
             where: {id},
+            include: this.taskInclude,
         });
         if (!task) {
             throw new NotFoundException(`Task with ID ${id} not found`);
@@ -41,7 +62,11 @@ export class TasksService {
         await this.findOne(id);
         const updated = await this.prisma.task.update({
             where: {id},
-            data: updateTaskDto,
+            data: {
+                ...updateTaskDto,
+                ...(user?.id ? {updatedById: user.id} : {}),
+            },
+            include: this.taskInclude,
         });
         this.tasksGateway.sendTaskUpdated(updated, user);
         return updated;
