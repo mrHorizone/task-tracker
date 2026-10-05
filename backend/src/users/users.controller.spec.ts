@@ -41,7 +41,7 @@ describe('UsersController', () => {
     describe('create', () => {
         it('should create a user', async () => {
             const dto = {login: 'user', password: 'pwd'};
-            const created = {id: 1, ...dto};
+            const created = {id: 1, login: 'user'};
             service.create.mockResolvedValue(created);
 
             const result = await controller.create(dto);
@@ -52,7 +52,7 @@ describe('UsersController', () => {
 
     describe('findAll', () => {
         it('should return all users', async () => {
-            const users = [{id: 1, login: 'user1', password: 'pwd'}];
+            const users = [{id: 1, login: 'user1'}];
             service.findAll.mockResolvedValue(users);
 
             const result = await controller.findAll();
@@ -63,7 +63,7 @@ describe('UsersController', () => {
 
     describe('findOne', () => {
         it('should return a user by id', async () => {
-            const user = {id: 1, login: 'user1', password: 'pwd'};
+            const user = {id: 1, login: 'user1'};
             service.findOne.mockResolvedValue(user);
 
             const result = await controller.findOne(1);
@@ -75,7 +75,7 @@ describe('UsersController', () => {
     describe('update', () => {
         it('should update a user', async () => {
             const dto = {login: 'updated'};
-            const updated = {id: 1, login: 'updated', password: 'pwd'};
+            const updated = {id: 1, login: 'updated'};
             service.update.mockResolvedValue(updated);
 
             const result = await controller.update(1, dto);

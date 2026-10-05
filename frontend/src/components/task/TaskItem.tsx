@@ -1,11 +1,11 @@
 import {useState, useRef, useEffect, useId} from "react";
-import type {Task, TaskEventUser} from "../../types/task.ts";
 import styles from './TaskItem.module.css';
 import * as React from "react";
+import type {Task, User} from "../../types";
 
 type NoteItemProps = {
     task: Task;
-    lockedByUser?: TaskEventUser;
+    lockedByUser?: User;
     onDelete: (id: number) => void;
     onSave: (id: number, title: string, text: string) => void;
     onStartEdit?: (id: number) => void;

@@ -2,7 +2,11 @@ export function escapeCsvField(value: unknown): string {
     if (value === null || value === undefined) {
         return '';
     }
-    const stringValue = String(value);
+    let stringValue = String(value);
+    // Sanitize formula injection for string values starting with formula characters
+    if (typeof value === 'string' && /^[=+\-@\t\r]/.test(stringValue)) {
+        stringValue = `'${stringValue}`;
+    }
     if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n') || stringValue.includes('\r')) {
         return `"${stringValue.replace(/"/g, '""')}"`;
     }

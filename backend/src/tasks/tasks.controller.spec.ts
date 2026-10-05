@@ -58,14 +58,16 @@ describe('TasksController', () => {
         expect(controller).toBeDefined();
     });
 
+    const mockUser = {id: 1, login: 'user1'};
+
     describe('exportTasks', () => {
         it('should trigger task export to CSV', async () => {
             const queueResponse = {jobId: '123', message: 'Task export to CSV queued successfully'};
             exportService.triggerExport.mockResolvedValue(queueResponse);
 
-            const result = await controller.exportTasks({user: {id: 1, login: 'user1'}});
+            const result = await controller.exportTasks(mockUser);
             expect(result).toEqual(queueResponse);
-            expect(exportService.triggerExport).toHaveBeenCalledWith({id: 1, login: 'user1'});
+            expect(exportService.triggerExport).toHaveBeenCalledWith(mockUser);
         });
     });
 
@@ -126,9 +128,9 @@ describe('TasksController', () => {
             const created = {id: 1, ...dto};
             service.create.mockResolvedValue(created);
 
-            const result = await controller.create(dto, {user: {id: 1, login: 'user1'}});
+            const result = await controller.create(dto, mockUser);
             expect(result).toEqual(created);
-            expect(service.create).toHaveBeenCalledWith(dto, {id: 1, login: 'user1'});
+            expect(service.create).toHaveBeenCalledWith(dto, mockUser);
         });
     });
 
@@ -160,9 +162,9 @@ describe('TasksController', () => {
             const updated = {id: 1, title: 'Updated', text: 'Desc'};
             service.update.mockResolvedValue(updated);
 
-            const result = await controller.update(1, dto, {user: {id: 1, login: 'user1'}});
+            const result = await controller.update(1, dto, mockUser);
             expect(result).toEqual(updated);
-            expect(service.update).toHaveBeenCalledWith(1, dto, {id: 1, login: 'user1'});
+            expect(service.update).toHaveBeenCalledWith(1, dto, mockUser);
         });
     });
 
@@ -170,9 +172,9 @@ describe('TasksController', () => {
         it('should delete a task', async () => {
             service.remove.mockResolvedValue({success: true, id: 1});
 
-            const result = await controller.remove(1, {user: {id: 1, login: 'user1'}});
+            const result = await controller.remove(1, mockUser);
             expect(result).toEqual({success: true, id: 1});
-            expect(service.remove).toHaveBeenCalledWith(1, {id: 1, login: 'user1'});
+            expect(service.remove).toHaveBeenCalledWith(1, mockUser);
         });
     });
 });

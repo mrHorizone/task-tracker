@@ -45,9 +45,9 @@ describe('UsersService', () => {
     });
 
     describe('create', () => {
-        it('should create a user with hashed password', async () => {
+        it('should create a user with hashed password and return user without password', async () => {
             const dto = {login: 'testuser', password: 'password123'};
-            const createdUser = {id: 1, login: 'testuser', password: 'hashedpassword'};
+            const createdUser = {id: 1, login: 'testuser'};
             prisma.user.create.mockResolvedValue(createdUser);
 
             const result = await service.create(dto);
@@ -57,6 +57,10 @@ describe('UsersService', () => {
                     login: 'testuser',
                     password: expect.any(String),
                 },
+                select: {
+                    id: true,
+                    login: true,
+                },
             });
             const createdPasswordArg = prisma.user.create.mock.calls[0][0].data.password;
             const isMatch = await bcrypt.compare('password123', createdPasswordArg);
@@ -65,16 +69,20 @@ describe('UsersService', () => {
     });
 
     describe('findAll', () => {
-        it('should return an array of users', async () => {
+        it('should return an array of users without passwords', async () => {
             const users = [
-                {id: 1, login: 'user1', password: 'pwd1'},
-                {id: 2, login: 'user2', password: 'pwd2'},
+                {id: 1, login: 'user1'},
+                {id: 2, login: 'user2'},
             ];
             prisma.user.findMany.mockResolvedValue(users);
 
             const result = await service.findAll();
             expect(result).toEqual(users);
             expect(prisma.user.findMany).toHaveBeenCalledWith({
+                select: {
+                    id: true,
+                    login: true,
+                },
                 orderBy: {id: 'asc'},
             });
         });
@@ -82,12 +90,18 @@ describe('UsersService', () => {
 
     describe('findOne', () => {
         it('should return a user if found', async () => {
-            const user = {id: 1, login: 'user1', password: 'pwd1'};
+            const user = {id: 1, login: 'user1'};
             prisma.user.findUnique.mockResolvedValue(user);
 
             const result = await service.findOne(1);
             expect(result).toEqual(user);
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({where: {id: 1}});
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                where: {id: 1},
+                select: {
+                    id: true,
+                    login: true,
+                },
+            });
         });
 
         it('should throw NotFoundException if user not found', async () => {
@@ -98,10 +112,10 @@ describe('UsersService', () => {
     });
 
     describe('update', () => {
-        it('should update and return a user', async () => {
-            const existingUser = {id: 1, login: 'user1', password: 'pwd1'};
+        it('should update and return a user without password', async () => {
+            const existingUser = {id: 1, login: 'user1'};
             const updateDto = {login: 'newlogin'};
-            const updatedUser = {...existingUser, ...updateDto};
+            const updatedUser = {id: 1, login: 'newlogin'};
 
             prisma.user.findUnique.mockResolvedValue(existingUser);
             prisma.user.update.mockResolvedValue(updatedUser);
@@ -111,22 +125,25 @@ describe('UsersService', () => {
             expect(prisma.user.update).toHaveBeenCalledWith({
                 where: {id: 1},
                 data: updateDto,
+                select: {
+                    id: true,
+                    login: true,
+                },
             });
         });
 
         it('should hash password when updating password', async () => {
-            const existingUser = {id: 1, login: 'user1', password: 'oldhashedpwd'};
+            const existingUser = {id: 1, login: 'user1'};
             const updateDto = {password: 'newpassword123'};
+            const updatedUser = {id: 1, login: 'user1'};
 
             prisma.user.findUnique.mockResolvedValue(existingUser);
-            prisma.user.update.mockImplementation(async ({data}) => ({
-                ...existingUser,
-                ...data,
-            }));
+            prisma.user.update.mockResolvedValue(updatedUser);
 
             const result = await service.update(1, updateDto);
-            expect(result.password).not.toEqual('newpassword123');
-            const isMatch = await bcrypt.compare('newpassword123', result.password);
+            expect(result).toEqual(updatedUser);
+            const updatedPasswordArg = prisma.user.update.mock.calls[0][0].data.password;
+            const isMatch = await bcrypt.compare('newpassword123', updatedPasswordArg);
             expect(isMatch).toBe(true);
         });
 

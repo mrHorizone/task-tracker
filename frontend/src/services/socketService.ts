@@ -62,13 +62,6 @@ class SocketService {
         return socket;
     }
 
-    disconnect(): void {
-        if (this.socket) {
-            this.socket.disconnect();
-            this.socket = null;
-        }
-    }
-
     startEditTask(taskId: number): void {
         const socket = this.getSocket();
         socket.emit('startEditTask', {taskId});

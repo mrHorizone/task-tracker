@@ -30,6 +30,31 @@ export class TaskExportService {
         }
         // Concurrency limit of 2 simultaneous CSV exports
         this.queue = new PQueue({concurrency: 2});
+
+        // Run initial cleanup of expired exports
+        void this.cleanupExpiredExports();
+    }
+
+    async cleanupExpiredExports(maxAgeMs: number = 24 * 60 * 60 * 1000): Promise<void> {
+        try {
+            const files = await fsPromises.readdir(this.exportsDir);
+            const now = Date.now();
+            for (const file of files) {
+                if (!file.endsWith('.csv')) continue;
+                const filePath = path.join(this.exportsDir, file);
+                try {
+                    const stats = await fsPromises.stat(filePath);
+                    if (now - stats.mtimeMs > maxAgeMs) {
+                        await fsPromises.unlink(filePath);
+                        this.logger.log(`Cleaned up expired CSV export file: ${file}`);
+                    }
+                } catch {
+                    // ignore error on single file
+                }
+            }
+        } catch (error) {
+            this.logger.warn(`Failed to clean up expired CSV exports: ${error instanceof Error ? error.message : error}`);
+        }
     }
 
     getExportsDirectory(): string {

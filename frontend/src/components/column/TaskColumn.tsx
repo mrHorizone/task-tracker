@@ -1,8 +1,8 @@
 import {useState} from "react";
-import type {Task, TaskEventUser} from "../../types/task.ts";
-import {Status} from "../../types/status.ts";
 import TaskItem from "../task/TaskItem.tsx";
 import styles from "./TaskColumn.module.css";
+import {Status, type Task, type User} from "../../types";
+import * as React from "react";
 
 const STATUS_TITLES: Record<Status, string> = {
     [Status.TODO]: "To Do",
@@ -13,7 +13,7 @@ const STATUS_TITLES: Record<Status, string> = {
 type TaskColumnProps = {
     status: Status;
     tasks: Task[];
-    lockedTasksMap?: Record<number, TaskEventUser>;
+    lockedTasksMap?: Record<number, User>;
     onAddTask: (status: Status) => void;
     onDeleteTask: (id: number) => void;
     onSaveTask: (id: number, title: string, text: string) => void;

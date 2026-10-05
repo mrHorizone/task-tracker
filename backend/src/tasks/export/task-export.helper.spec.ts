@@ -18,6 +18,13 @@ describe('TaskExportHelper', () => {
             expect(escapeCsvField('hello "friend"')).toBe('"hello ""friend"""');
             expect(escapeCsvField('line 1\nline 2')).toBe('"line 1\nline 2"');
         });
+
+        it('should sanitize formula injection characters', () => {
+            expect(escapeCsvField('=SUM(A1:A10)')).toBe("'=SUM(A1:A10)");
+            expect(escapeCsvField('+12345')).toBe("'+12345");
+            expect(escapeCsvField('-cmd|...')).toBe("'-cmd|...");
+            expect(escapeCsvField('@SUM')).toBe("'@SUM");
+        });
     });
 
     describe('convertTasksToCsv', () => {

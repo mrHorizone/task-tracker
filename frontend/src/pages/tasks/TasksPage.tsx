@@ -1,29 +1,27 @@
 import {useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {toast} from "sonner";
-import {
-    Status,
-    type Task,
-    type TaskDeletedEvent,
-    type TaskEventUser,
-    type TaskLockInfo,
-    type TaskExportStartedEvent,
-    type TaskExportCompletedEvent,
-    type TaskExportFailedEvent,
-} from "../../types/task.ts";
 import {taskService} from "../../services/taskService.ts";
 import {socketService} from "../../services/socketService.ts";
 import {authService} from "../../services/authService.ts";
 import AppHeader from "../../components/header/AppHeader.tsx";
 import TaskColumn from "../../components/column/TaskColumn.tsx";
 import styles from "./TasksPage.module.css";
+import {
+    Status,
+    type Task,
+    type TaskDeletedEvent, type TaskExportCompletedEvent, type TaskExportFailedEvent,
+    type TaskExportStartedEvent,
+    type TaskLockInfo,
+    type User
+} from "../../types";
 
 const COLUMNS = [Status.TODO, Status.IN_PROGRESS, Status.DONE];
 
 function TasksPage() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [lockedTasksMap, setLockedTasksMap] = useState<Record<number, TaskEventUser>>({});
+    const [lockedTasksMap, setLockedTasksMap] = useState<Record<number, User>>({});
     const [isExporting, setIsExporting] = useState(false);
     const tasksRef = useRef<Task[]>(tasks);
 
@@ -64,7 +62,7 @@ function TasksPage() {
         const currentUser = authService.getUser();
 
         const handleActiveLocks = (locks: TaskLockInfo[]) => {
-            const newMap: Record<number, TaskEventUser> = {};
+            const newMap: Record<number, User> = {};
             for (const lock of locks) {
                 if (!currentUser || currentUser.id !== lock.user.id) {
                     newMap[lock.taskId] = lock.user;
