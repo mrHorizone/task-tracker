@@ -37,6 +37,7 @@ function TaskItem({task, lockedByUser, onDelete, onSave, onStartEdit, onStopEdit
     // Keep title/text in sync if task props update from outside
     useEffect(() => {
         if (!isEditing) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTitle(task.title);
             setText(task.text);
         }

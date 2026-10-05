@@ -1,6 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import * as fs from 'fs';
+import * as path from 'path';
 import {TasksController} from './tasks.controller.js';
 import {TasksService} from './tasks.service.js';
+import {TaskExportService} from './export/task-export.service.js';
 import {JwtAuthGuard} from '../auth/jwt-auth.guard.js';
 
 describe('TasksController', () => {
@@ -12,6 +15,10 @@ describe('TasksController', () => {
         update: ReturnType<typeof vi.fn>;
         remove: ReturnType<typeof vi.fn>;
     };
+    let exportService: {
+        triggerExport: ReturnType<typeof vi.fn>;
+        getExportFile: ReturnType<typeof vi.fn>;
+    };
 
     beforeEach(async () => {
         service = {
@@ -22,12 +29,21 @@ describe('TasksController', () => {
             remove: vi.fn(),
         };
 
+        exportService = {
+            triggerExport: vi.fn(),
+            getExportFile: vi.fn(),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
             controllers: [TasksController],
             providers: [
                 {
                     provide: TasksService,
                     useValue: service,
+                },
+                {
+                    provide: TaskExportService,
+                    useValue: exportService,
                 },
             ],
         })
@@ -40,6 +56,68 @@ describe('TasksController', () => {
 
     it('should be defined', () => {
         expect(controller).toBeDefined();
+    });
+
+    describe('exportTasks', () => {
+        it('should trigger task export to CSV', async () => {
+            const queueResponse = {jobId: '123', message: 'Task export to CSV queued successfully'};
+            exportService.triggerExport.mockResolvedValue(queueResponse);
+
+            const result = await controller.exportTasks({user: {id: 1, login: 'user1'}});
+            expect(result).toEqual(queueResponse);
+            expect(exportService.triggerExport).toHaveBeenCalledWith({id: 1, login: 'user1'});
+        });
+    });
+
+    describe('downloadExport', () => {
+        const testFileId = 'test-download-file';
+        const tempExportsDir = path.resolve(process.cwd(), 'data', 'exports');
+        const testFilePath = path.join(tempExportsDir, `tasks-export-${testFileId}.csv`);
+
+        afterEach(() => {
+            if (fs.existsSync(testFilePath)) {
+                try {
+                    fs.unlinkSync(testFilePath);
+                } catch {
+                    // Ignore cleanup failure
+                }
+            }
+        });
+
+        it('should return a StreamableFile for the requested export', async () => {
+            if (!fs.existsSync(tempExportsDir)) {
+                fs.mkdirSync(tempExportsDir, {recursive: true});
+            }
+            fs.writeFileSync(testFilePath, 'id,title\n1,Test', 'utf-8');
+
+            exportService.getExportFile.mockReturnValue({
+                filePath: testFilePath,
+                filename: `tasks-export-${testFileId}.csv`,
+            });
+
+            const resMock = {
+                set: vi.fn(),
+            };
+
+            const result = controller.downloadExport(testFileId, resMock as any);
+            expect(exportService.getExportFile).toHaveBeenCalledWith(testFileId);
+            expect(resMock.set).toHaveBeenCalledWith({
+                'Content-Type': 'text/csv; charset=utf-8',
+                'Content-Disposition': `attachment; filename="tasks-export-${testFileId}.csv"`,
+            });
+            expect(result).toBeDefined();
+            
+            const stream = result.getStream() as any;
+            await new Promise<void>((resolve) => {
+                stream.on('open', () => {
+                    stream.destroy();
+                    resolve();
+                });
+                stream.on('error', () => {
+                    resolve();
+                });
+            });
+        });
     });
 
     describe('create', () => {

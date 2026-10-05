@@ -2,7 +2,12 @@ import {useNavigate} from 'react-router-dom';
 import {authService} from '../../services/authService.ts';
 import styles from './AppHeader.module.css';
 
-function AppHeader() {
+interface AppHeaderProps {
+    onExportCsv?: () => void;
+    isExporting?: boolean;
+}
+
+function AppHeader({onExportCsv, isExporting}: AppHeaderProps = {}) {
     const navigate = useNavigate();
     const user = authService.getUser();
 
@@ -13,15 +18,14 @@ function AppHeader() {
 
     return (
         <header className={styles.header}>
-            {/*<button className="pulse" onClick={() => {*/}
-            {/*    console.log("open sidebar with notifications")*/}
-            {/*}}>*/}
-            {/*    Notifications*/}
-            {/*</button>*/}
-
             <span className={styles.appName}>{user?.login}'s tasks</span>
 
             <div className={styles.userPanel}>
+                {onExportCsv && (
+                    <button onClick={onExportCsv} disabled={isExporting}>
+                        {isExporting ? 'Exporting...' : 'Export to CSV'}
+                    </button>
+                )}
                 <button onClick={handleLogout}>
                     Logout
                 </button>

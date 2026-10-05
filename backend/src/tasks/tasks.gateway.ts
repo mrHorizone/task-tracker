@@ -32,6 +32,25 @@ export interface TaskDeletedPayload {
     user?: TaskEventUser;
 }
 
+export interface TaskExportStartedPayload {
+    jobId: string;
+    user?: TaskEventUser;
+}
+
+export interface TaskExportCompletedPayload {
+    jobId: string;
+    fileId: string;
+    filename: string;
+    count: number;
+    user?: TaskEventUser;
+}
+
+export interface TaskExportFailedPayload {
+    jobId: string;
+    error: string;
+    user?: TaskEventUser;
+}
+
 @WebSocketGateway({
     cors: {
         origin: '*',
@@ -159,6 +178,19 @@ export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const payload: TaskDeletedPayload = {id, ...(user ? {user} : {}), ...(title ? {title} : {})};
         this.server?.emit('taskDeleted', payload);
+    }
+
+    sendTaskExportStarted(jobId: string, user?: TaskEventUser) {
+        const payload: TaskExportStartedPayload = {jobId, ...(user ? {user} : {})};
+        this.server?.emit('taskExportStarted', payload);
+    }
+
+    sendTaskExportCompleted(payload: TaskExportCompletedPayload) {
+        this.server?.emit('taskExportCompleted', payload);
+    }
+
+    sendTaskExportFailed(payload: TaskExportFailedPayload) {
+        this.server?.emit('taskExportFailed', payload);
     }
 
     private getActiveLocksList(): TaskLockInfo[] {

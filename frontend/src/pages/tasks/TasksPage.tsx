@@ -1,7 +1,16 @@
 import {useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {toast} from "sonner";
-import {Status, type Task, type TaskDeletedEvent, type TaskEventUser, type TaskLockInfo} from "../../types/task.ts";
+import {
+    Status,
+    type Task,
+    type TaskDeletedEvent,
+    type TaskEventUser,
+    type TaskLockInfo,
+    type TaskExportStartedEvent,
+    type TaskExportCompletedEvent,
+    type TaskExportFailedEvent,
+} from "../../types/task.ts";
 import {taskService} from "../../services/taskService.ts";
 import {socketService} from "../../services/socketService.ts";
 import {authService} from "../../services/authService.ts";
@@ -15,6 +24,7 @@ function TasksPage() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [lockedTasksMap, setLockedTasksMap] = useState<Record<number, TaskEventUser>>({});
+    const [isExporting, setIsExporting] = useState(false);
     const tasksRef = useRef<Task[]>(tasks);
 
     useEffect(() => {
@@ -127,12 +137,47 @@ function TasksPage() {
             setTasks(prev => prev.filter(task => task.id !== id));
         };
 
+        const handleTaskExportStarted = (data: TaskExportStartedEvent) => {
+            if (data.user && (!currentUser || currentUser.id !== data.user.id)) {
+                toast.info(`${data.user.login} started exporting tasks to CSV`);
+            }
+        };
+
+        const handleTaskExportCompleted = async (data: TaskExportCompletedEvent) => {
+            const isInitiator = !data.user || (currentUser && currentUser.id === data.user.id);
+            if (isInitiator) {
+                toast.success(`CSV export completed! Exported ${data.count} tasks. Downloading file...`);
+                setIsExporting(false);
+                try {
+                    await taskService.downloadExportFile(data.fileId, data.filename);
+                } catch (error) {
+                    console.error("Failed to automatically download exported CSV:", error);
+                    toast.error("Failed to download CSV export file");
+                }
+            } else {
+                toast.info(`${data.user?.login} finished exporting ${data.count} tasks to CSV`);
+            }
+        };
+
+        const handleTaskExportFailed = (data: TaskExportFailedEvent) => {
+            const isInitiator = !data.user || (currentUser && currentUser.id === data.user.id);
+            if (isInitiator) {
+                toast.error(`CSV export failed: ${data.error}`);
+                setIsExporting(false);
+            } else {
+                toast.error(`CSV export failed for ${data.user?.login}: ${data.error}`);
+            }
+        };
+
         socket.on('activeLocks', handleActiveLocks);
         socket.on('taskLocked', handleTaskLocked);
         socket.on('taskUnlocked', handleTaskUnlocked);
         socket.on('taskCreated', handleTaskCreated);
         socket.on('taskUpdated', handleTaskUpdated);
         socket.on('taskDeleted', handleTaskDeleted);
+        socket.on('taskExportStarted', handleTaskExportStarted);
+        socket.on('taskExportCompleted', handleTaskExportCompleted);
+        socket.on('taskExportFailed', handleTaskExportFailed);
 
         return () => {
             socket.off('activeLocks', handleActiveLocks);
@@ -141,6 +186,9 @@ function TasksPage() {
             socket.off('taskCreated', handleTaskCreated);
             socket.off('taskUpdated', handleTaskUpdated);
             socket.off('taskDeleted', handleTaskDeleted);
+            socket.off('taskExportStarted', handleTaskExportStarted);
+            socket.off('taskExportCompleted', handleTaskExportCompleted);
+            socket.off('taskExportFailed', handleTaskExportFailed);
         };
     }, []);
 
@@ -238,9 +286,21 @@ function TasksPage() {
         }
     };
 
+    const handleExportCsv = async () => {
+        try {
+            setIsExporting(true);
+            await taskService.exportTasksToCsv();
+            toast.info("CSV export queued in background...");
+        } catch (error) {
+            console.error("Failed to trigger CSV export:", error);
+            toast.error("Failed to queue CSV export");
+            setIsExporting(false);
+        }
+    };
+
     return (
         <>
-            <AppHeader/>
+            <AppHeader onExportCsv={handleExportCsv} isExporting={isExporting}/>
 
             <main className={styles.mainContainer}>
                 <div className={styles.board}>

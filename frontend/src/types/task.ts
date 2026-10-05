@@ -30,4 +30,23 @@ export type TaskLockInfo = {
     user: TaskEventUser;
 };
 
+export type TaskExportStartedEvent = {
+    jobId: string;
+    user?: TaskEventUser;
+};
+
+export type TaskExportCompletedEvent = {
+    jobId: string;
+    fileId: string;
+    filename: string;
+    count: number;
+    user?: TaskEventUser;
+};
+
+export type TaskExportFailedEvent = {
+    jobId: string;
+    error: string;
+    user?: TaskEventUser;
+};
+
 export {Status};
