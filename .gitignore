@@ -38,12 +38,7 @@ ehthumbs.db
 Thumbs.db
 
 # IDEs and Editors
-.idea/shelf/
-.idea/workspace.xml
-.idea/httpRequests/
-.idea/queries/
-.idea/dataSources/
-.idea/dataSources.local.xml
+.idea/
 *.swp
 *.swo
 *.swn
