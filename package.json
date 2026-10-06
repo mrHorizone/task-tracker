@@ -7,8 +7,9 @@
   ],
   "scripts": {
     "setup:db": "docker compose -f backend/docker-compose.yaml up -d",
-    "setup:backend": "npx --prefix backend prisma db push && npm --prefix backend run seed",
+    "setup:backend": "npm --prefix backend run db:push && npm --prefix backend run seed",
     "setup": "npm run setup:db && npm run setup:backend",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run start:backend\" \"npm run start:frontend\"",
     "start:backend": "npm --prefix backend run start:dev",
     "start:frontend": "npm --prefix frontend run dev",
     "test:backend": "npm --prefix backend run test",
@@ -18,5 +19,8 @@
     "build:backend": "npm --prefix backend run build",
     "build:frontend": "npm --prefix frontend run build",
     "build": "npm run build:backend && npm run build:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
   }
 }

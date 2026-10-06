@@ -21,6 +21,7 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "seed": "prisma db seed",
+    "db:push": "prisma db push",
     "postinstall": "prisma generate"
   },
   "prisma": {

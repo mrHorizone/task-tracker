@@ -64,7 +64,7 @@ async function main() {
         },
         {
             title: 'Task creator/assignee',
-            text: 'Add creators field for task and assignee managing',
+            text: 'Add creators field for task',
             status: Status.IN_PROGRESS,
             authorId: tommy.id,
             updatedById: null,

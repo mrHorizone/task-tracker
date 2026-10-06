@@ -44,30 +44,44 @@ A full-stack, real-time collaborative Task Tracker application with a Kanban boa
 
 ### 2. Quick Start Commands
 
-#### Option A: Using NPM Workspace Scripts (Recommended)
+#### Option A: Single Command (Concurrent)
 
-From the project root:
+Start PostgreSQL database and run both backend and frontend concurrently in one terminal:
 
 ```bash
-# 1. Install all dependencies (root, backend, and frontend)
+# 1. Start database container and apply seeds
+npm run setup
+
+# 2. Run both Backend & Frontend concurrently
+npm start
+```
+
+---
+
+#### Option B: Step-by-Step (Separate Consoles / IDE Run Icons)
+
+Run each step independently (each block below has its own play button in the IDE):
+
+##### Step 1: Install & Database Setup
+```bash
 npm install
-
-# 2. Start PostgreSQL container in Docker
 npm run setup:db
-
-# 3. Push Prisma schema & seed database with initial users and tasks
 npm run setup:backend
+```
 
-# 4. Start Backend in terminal 1 (starts on http://localhost:3000)
+##### Step 2: Start Backend (Terminal 1)
+```bash
 npm run start:backend
+```
 
-# 5. Start Frontend in terminal 2 (starts on http://localhost:5173)
+##### Step 3: Start Frontend (Terminal 2)
+```bash
 npm run start:frontend
 ```
 
 ---
 
-#### Option B: Fast Start Scripts (One-Liners)
+#### Option C: Fast Start Scripts (One-Liners)
 
 ##### For macOS / Linux / Git Bash:
 ```bash
