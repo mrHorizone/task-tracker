@@ -1,141 +1,217 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Task Tracker — Backend Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust, real-time REST and WebSocket API for the Task Tracker collaborative application, built with **NestJS**, **Prisma ORM**, **PostgreSQL**, and **Socket.IO**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Authentication & Authorization:** JWT-based stateless authentication with bcrypt password hashing (`/auth/login`, `/auth/register`).
+- **Task Management (CRUD):** Full task lifecycle management (`TODO`, `IN_PROGRESS`, `DONE`) with author and updater tracking.
+- **Real-Time Synchronization & Concurrency Locks:** Socket.IO gateway broadcasting live task changes (`created`, `updated`, `deleted`) and active task editing locks to prevent race conditions during concurrent editing.
+- **Asynchronous CSV Export:** Queue-based task export to CSV powered by `p-queue` with real-time WebSocket progress notifications and automatic disk cleanup of expired export files.
+- **Database & Migrations:** PostgreSQL managed via Prisma ORM with automated seeding.
+- **Testing:** Comprehensive unit and E2E test suites with Vitest.
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## Tech Stack
 
-## Compile and run the project
+- **Framework:** [NestJS 12](https://nestjs.com/) (Express HTTP adapter)
+- **Database & ORM:** [PostgreSQL 16](https://www.postgresql.org/) + [Prisma 6](https://www.prisma.io/)
+- **Real-Time:** [Socket.IO](https://socket.io/) (`@nestjs/platform-socket.io`)
+- **Authentication:** [Passport JWT](http://www.passportjs.org/) + [bcrypt](https://github.com/kelektiv/node.bcrypt.js)
+- **Background Queue:** [p-queue](https://github.com/sindresorhus/p-queue)
+- **Testing:** [Vitest](https://vitest.dev/) + [Supertest](https://github.com/ladjs/supertest)
+- **Linter & Formatter:** [Oxlint](https://oxc.rs/) + [Prettier](https://prettier.io/)
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+## Getting Started
 
-# production mode
-$ npm run start:prod
-```
+### Prerequisites
 
-## Run tests
+- **Node.js:** `v20.x` or `v22.x`+
+- **npm:** `v10.x`+
+- **Docker & Docker Compose:** (for local PostgreSQL instance) or an existing PostgreSQL database
+
+---
+
+### Environment Variables
+
+Create a `.env` file in the `backend/` directory by copying `.env.example`:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+| Variable | Description | Default Value |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://task_tracker:task_tracker@localhost:5432/task_tracker?schema=public` |
+| `PORT` | HTTP server listening port | `3000` |
+| `JWT_SECRET` | Secret key used for signing JWT tokens | `jwt-secret-task-tracker-default` *(set a secure secret in production)* |
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it
-runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more
-information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check
-out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment
-straightforward and fast, requiring just a few simple steps:
+### Installation & Database Setup
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Start PostgreSQL via Docker Compose:**
+   ```bash
+   docker compose up -d
+   ```
+
+3. **Apply Prisma schema to the database:**
+   ```bash
+   npx prisma db push
+   ```
+
+4. **Seed database with test users and sample tasks:**
+   ```bash
+   npm run seed
+   ```
+
+#### Default Test Accounts
+
+After running the seed script, the following demo accounts are available:
+
+| Login | Password | Role |
+| :--- | :--- | :--- |
+| `Tommy` | `123` | User / Author |
+| `Jerry` | `123` | User / Author |
+
+---
+
+## Running the Application
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Development mode with hot-reload (watch mode)
+npm run start:dev
+
+# Standard start
+npm run start
+
+# Production build & start
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than
-managing infrastructure.
+The backend server will start at `http://localhost:3000` (or the port configured in `PORT`).
 
-## Observability
+---
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues
-early, and maintaining reliable performance.
+## API Reference
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep
-visibility into your system with minimal setup:
+### Authentication (`/auth`)
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need
-  optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding
-  defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies
-  so your team can react quickly.
+| Method | Endpoint | Auth Required | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/register` | No | Register a new user (`{ login, password }`) |
+| `POST` | `/auth/login` | No | Login and receive a JWT Bearer token |
 
-To add it to this project:
+### Tasks (`/tasks`)
+
+*All task endpoints require a valid JWT Bearer token in the `Authorization: Bearer <token>` header.*
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/tasks` | Retrieve all tasks |
+| `POST` | `/tasks` | Create a new task (`{ title, text, status? }`) |
+| `GET` | `/tasks/:id` | Get details of a single task |
+| `PATCH` | `/tasks/:id` | Update task fields / status (`{ title?, text?, status? }`) |
+| `DELETE` | `/tasks/:id` | Delete a task |
+| `POST` | `/tasks/export/csv` | Queue a background task export to CSV |
+| `GET` | `/tasks/export/:fileId` | Download generated CSV export file |
+
+### Users (`/users`)
+
+*Protected by JWT Guard.*
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/users` | List all users (excluding password hashes) |
+| `GET` | `/users/:id` | Get a specific user by ID |
+| `PATCH` | `/users/:id` | Update user |
+| `DELETE` | `/users/:id` | Delete user |
+
+---
+
+## WebSocket Events (Socket.IO)
+
+Clients connect to `ws://localhost:3000` with JWT authentication passed in the connection payload:
+
+```javascript
+const socket = io('http://localhost:3000', {
+  auth: { token: 'YOUR_JWT_TOKEN' }
+});
+```
+
+### Client-to-Server Events
+
+- `task:lock` — Payload: `{ taskId: number }` (requests an exclusive edit lock on a task)
+- `task:unlock` — Payload: `{ taskId: number }` (releases the edit lock)
+
+### Server-to-Client Events
+
+- `task:created` — Emitted when a new task is created
+- `task:updated` — Emitted when a task is updated or moved across columns
+- `task:deleted` — Emitted when a task is removed
+- `activeLocks` — List of all currently active task locks sent upon connection
+- `task:locked` — Broadcast when a user locks a task for editing
+- `task:unlocked` — Broadcast when a task edit lock is released
+- `tasks:export:progress` — CSV export progress update (`{ jobId, progress, total }`)
+- `tasks:export:completed` — CSV export completed (`{ jobId, fileId, downloadUrl, fileName }`)
+- `tasks:export:failed` — CSV export error notification
+
+---
+
+## Testing & Quality
 
 ```bash
-$ npm install @nestjs/observe
+# Run unit tests
+npm run test
+
+# Run unit tests with watch mode
+npm run test:watch
+
+# Run unit tests with coverage
+npm run test:cov
+
+# Run End-to-End (E2E) tests
+npm run test:e2e
+
+# Run linter
+npm run lint
+
+# Format code with Prettier
+npm run format
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/overview) - it takes a single import and an app key.
+---
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse
-the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data,
-with nothing to install.
+## Project Structure
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and
-  logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time
-  using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our
-  official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework)
-  and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If
-you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```text
+backend/
+├── docker-compose.yaml     # PostgreSQL Docker configuration
+├── prisma/
+│   ├── schema.prisma       # Database models and relations
+│   └── seed.ts             # Database seeder (Tommy & Jerry users + default tasks)
+├── src/
+│   ├── auth/               # JWT authentication, guards, strategy, decorators
+│   ├── tasks/              # Task CRUD, WebSocket gateway, CSV export queue
+│   │   ├── dto/            # Task DTOs
+│   │   ├── export/         # CSV export service, worker queue, file download
+│   │   ├── tasks.controller.ts
+│   │   ├── tasks.gateway.ts
+│   │   └── tasks.service.ts
+│   ├── users/              # User management
+│   ├── prisma/             # Prisma service provider
+│   ├── app.module.ts       # Main NestJS module
+│   └── main.ts             # Application entry point & global pipes
+└── vitest.config.ts        # Vitest test configuration
+```
