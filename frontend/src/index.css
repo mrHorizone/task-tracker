@@ -7,7 +7,7 @@
     --text: #6b6375;
     --text-h: #08060d;
     --bg: #fff;
-    --bg-secondary: rgba(244, 243, 236, 0.5);
+    --bg-secondary: #edede4;
     --border-color: #e5e4e7;
     --code-bg: #f4f3ec;
     --accent: #aa3bff;
@@ -57,9 +57,11 @@
 #root {
     display: flex;
     flex-direction: column;
+    width: fit-content;
 }
 
 body {
+    justify-items: center;
     height: 100%;
     width: 100%;
     margin: 0;
