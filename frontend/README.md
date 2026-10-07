@@ -31,9 +31,9 @@ A modern, real-time collaborative Kanban board built with **React 19**, **TypeSc
 
 ## Getting Started
 
-### Prerequisites
+### Launch requirements
 
-- **Node.js:** `v20.x` or `v22.x`+
+- **Node.js:** `v24.x`
 - **npm:** `v10.x`+
 - Running **Backend Service** (default: `http://localhost:3000`)
 
@@ -71,17 +71,23 @@ cp .env.example .env
 
 ## Available Scripts
 
+Start development server with HMR:
 ```bash
-# Start development server with HMR
 npm run dev
+```
 
-# Type-check and build for production
+Type-check and build for production:
+```bash
 npm run build
+```
 
-# Preview production build locally
+Preview production build locally:
+```bash
 npm run preview
+```
 
-# Lint source files
+Lint source files:
+```bash
 npm run lint
 ```
 

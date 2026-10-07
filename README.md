@@ -46,17 +46,23 @@ A full-stack, real-time collaborative Task Tracker application with a Kanban boa
 
 Run each step independently:
 
-##### Step 1: Install & Database Setup
+##### Step 1: Environment Variables Setup
+Create a `.env` file in the `backend/` directory by copying `.env.example`:
+```bash
+cp backend/.env.example backend/.env
+```
+
+##### Step 2: Install & Database Setup
 ```bash
 npm run setup
 ```
 
-##### Step 2: Start Backend (Terminal 1)
+##### Step 3: Start Backend (Terminal 1)
 ```bash
 npm run start:backend
 ```
 
-##### Step 3: Start Frontend (Terminal 2)
+##### Step 4: Start Frontend (Terminal 2)
 ```bash
 npm run start:frontend
 ```
@@ -122,17 +128,27 @@ For in-depth guides and API references, check the module documentation:
 
 Run checks across the monorepo:
 
+Backend unit tests:
 ```bash
-# Backend unit tests
 npm run test:backend
+```
 
-# Backend E2E tests
+Backend E2E tests:
+```bash
 npm run test:e2e
+```
 
-# Linting
+Lint backend:
+```bash
 npm run lint:backend
-npm run lint:frontend
+```
 
-# Production build verification
+Lint frontend:
+```bash
+npm run lint:frontend
+```
+
+Production build verification:
+```bash
 npm run build
 ```

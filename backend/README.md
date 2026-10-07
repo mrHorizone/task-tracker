@@ -29,9 +29,9 @@ A robust, real-time REST and WebSocket API for the Task Tracker collaborative ap
 
 ## Getting Started
 
-### Prerequisites
+### Launch requirements
 
-- **Node.js:** `v20.x` or `v22.x`+
+- **Node.js:** `v24.x`
 - **npm:** `v10.x`+
 - **Docker & Docker Compose:** (for local PostgreSQL instance) or an existing PostgreSQL database
 
@@ -88,15 +88,22 @@ After running the seed script, the following demo accounts are available:
 
 ## Running the Application
 
+Development mode with hot-reload (watch mode):
 ```bash
-# Development mode with hot-reload (watch mode)
 npm run start:dev
+```
 
-# Standard start
+Standard start:
+```bash
 npm run start
+```
 
-# Production build & start
+Production build & start:
+```bash
 npm run build
+```
+
+```bash
 npm run start:prod
 ```
 
@@ -171,23 +178,33 @@ const socket = io('http://localhost:3000', {
 
 ## Testing & Quality
 
+Run unit tests:
 ```bash
-# Run unit tests
 npm run test
+```
 
-# Run unit tests with watch mode
+Run unit tests with watch mode:
+```bash
 npm run test:watch
+```
 
-# Run unit tests with coverage
+Run unit tests with coverage:
+```bash
 npm run test:cov
+```
 
-# Run End-to-End (E2E) tests
+Run End-to-End (E2E) tests:
+```bash
 npm run test:e2e
+```
 
-# Run linter
+Run linter:
+```bash
 npm run lint
+```
 
-# Format code with Prettier
+Format code with Prettier:
+```bash
 npm run format
 ```
 
