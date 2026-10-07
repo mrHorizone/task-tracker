@@ -34,39 +34,21 @@ A full-stack, real-time collaborative Task Tracker application with a Kanban boa
 
 ## Fast Local Start
 
-### 1. Prerequisites
+### 1. Launch requirements
 
-- **Node.js:** `v20.x` or `v22.x`+
+- **Node.js:** `v24.x`
 - **npm:** `v10.x`+
 - **Docker & Docker Compose:** Installed and running (for PostgreSQL)
 
 ---
 
-### 2. Quick Start Commands
+### 2. Quick Start Commands (Step-by-Step)
 
-#### Option A: Single Command (Concurrent)
-
-Start PostgreSQL database and run both backend and frontend concurrently in one terminal:
-
-```bash
-# 1. Start database container and apply seeds
-npm run setup
-
-# 2. Run both Backend & Frontend concurrently
-npm start
-```
-
----
-
-#### Option B: Step-by-Step (Separate Consoles / IDE Run Icons)
-
-Run each step independently (each block below has its own play button in the IDE):
+Run each step independently:
 
 ##### Step 1: Install & Database Setup
 ```bash
-npm install
-npm run setup:db
-npm run setup:backend
+npm run setup
 ```
 
 ##### Step 2: Start Backend (Terminal 1)
@@ -76,38 +58,6 @@ npm run start:backend
 
 ##### Step 3: Start Frontend (Terminal 2)
 ```bash
-npm run start:frontend
-```
-
----
-
-#### Option C: Fast Start Scripts (One-Liners)
-
-##### For macOS / Linux / Git Bash:
-```bash
-# Start Database & Apply Seeds
-docker compose -f backend/docker-compose.yaml up -d && \
-(cd backend && npm install && npx prisma db push && npm run seed) && \
-(cd frontend && npm install)
-
-# Run Backend (Terminal 1)
-cd backend && npm run start:dev
-
-# Run Frontend (Terminal 2)
-cd frontend && npm run dev
-```
-
-##### For Windows PowerShell:
-```powershell
-# Start Database & Apply Seeds
-docker compose -f backend/docker-compose.yaml up -d
-cd backend; npm install; npx prisma db push; npm run seed; cd ..
-cd frontend; npm install; cd ..
-
-# Run Backend (Terminal 1)
-npm run start:backend
-
-# Run Frontend (Terminal 2)
 npm run start:frontend
 ```
 
