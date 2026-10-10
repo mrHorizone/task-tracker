@@ -1,7 +1,7 @@
 button {
     width: fit-content;
-    /*height: fit-content;*/
     padding: var(--fields-padding);
+    white-space: nowrap;
 
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
