@@ -9,7 +9,6 @@
     "setup:npm": "npm install --prefix backend && npm install --prefix frontend",
     "setup:db": "docker compose -f backend/docker-compose.yaml up -d",
     "setup:backend": "npm --prefix backend run db:push && npm --prefix backend run seed",
-    "setup": "npm run setup:npm && npm run setup:db && npm run setup:backend",
     "start:backend": "npm --prefix backend run start:dev",
     "start:frontend": "npm --prefix frontend run dev",
     "test:backend": "npm --prefix backend run test",

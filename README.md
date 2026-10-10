@@ -46,23 +46,33 @@ A full-stack, real-time collaborative Task Tracker application with a Kanban boa
 
 Run each step independently:
 
-##### Step 1: Environment Variables Setup
+##### Step 1: Install Dependencies
+```bash
+npm run setup:npm
+```
+
+##### Step 2: Environment Variables Setup
 Create a `.env` file in the `backend/` directory by copying `.env.example`:
 ```bash
 cp backend/.env.example backend/.env
 ```
 
-##### Step 2: Install & Database Setup
+##### Step 3: Start Database (PostgreSQL)
 ```bash
-npm run setup
+npm run setup:db
 ```
 
-##### Step 3: Start Backend (Terminal 1)
+##### Step 4: Database Push & Seed
+```bash
+npm run setup:backend
+```
+
+##### Step 5: Start Backend (Terminal 1)
 ```bash
 npm run start:backend
 ```
 
-##### Step 4: Start Frontend (Terminal 2)
+##### Step 6: Start Frontend (Terminal 2)
 ```bash
 npm run start:frontend
 ```
